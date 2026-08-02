@@ -683,8 +683,8 @@
     {
       "path": "submissions/v4-strategy-hook/PROPOSAL.md",
       "kind": "package:PROPOSAL.md",
-      "bytes": 6714,
-      "sha256": "76153a23909b9b3c81942ff33b744de962ea8116c9f466cb236b9874d223ee07"
+      "bytes": 6797,
+      "sha256": "20a9f10a0070b54c7a4b21e89eb2b64b087225aa9c85025a6c0149c8cb4de712"
     },
     {
       "path": "submissions/v4-strategy-hook/STATIC_ANALYSIS.md",
@@ -695,8 +695,8 @@
     {
       "path": "submissions/v4-strategy-hook/TEST_PLAN.md",
       "kind": "package:TEST_PLAN.md",
-      "bytes": 2427,
-      "sha256": "f8110352aa400e04c5d452b197e4c7b2f4293cea9d77911abd3a878555a7aba1"
+      "bytes": 3433,
+      "sha256": "42e0e63f4fe6172cfd29b76c3e8df0f07c07dc022f3590554a6ae486637128af"
     },
     {
       "path": "submissions/v4-strategy-hook/THREAT_MODEL.md",
@@ -3458,5 +3458,5 @@
       "kind": "javascript-import"
     }
   ],
-  "reviewTargetHash": "sha256:19be656fa8bfa4ea222b98233b942ebb7ee7cd2a9d48f878cb8fd6b5d1116a76"
+  "reviewTargetHash": "sha256:67bdf0a1311df93709834dbcfa1c4c69b5f42397f41914a218444c46d211dc1b"
 }
