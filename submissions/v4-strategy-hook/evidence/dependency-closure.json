@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "attestation": "builder-declared-untrusted",
+  "result": "passed-with-explicit-limitations",
+  "repositoryCommit": "95fa09910ef0d295b6013f62778d741c01262ef7",
+  "command": "node $SKILL_ROOT/scripts/build-review-target.mjs --repository-root . submissions/v4-strategy-hook --write submissions/v4-strategy-hook/evidence/review-target.json",
+  "closureStatus": "complete",
+  "sourceAndEvidenceFileCount": 125,
+  "dependencyLock": {
+    "path": "dependencies/compatibility.lock.json",
+    "sha256": "sha256:a05a7a3e5a68473c95ff302f9bc3a3b17f32d16c62bbaaf8f0d5378a92ada7a5",
+    "baseline": "model-specific-pinned"
+  },
+  "compilerBuildInfo": {
+    "path": "submissions/v4-strategy-hook/evidence/build-info/adb2b40febb7682c.json",
+    "sha256": "sha256:9625277df4a03b22e57171efa6e0fc67b245fe493aff86b62ee540a929fd0a0e",
+    "solidity": "0.8.26+commit.8a97fa7a"
+  },
+  "keeperPackage": {
+    "lockPath": "keeper/package-lock.json",
+    "lockSha256": "sha256:e95b5b7031ac78039edffad6f6fdc4cc1f0324b9800e4a884f49786a629c8092",
+    "viemVersion": "2.55.10",
+    "viemIntegrity": "sha512-Q9Ba+/ma81U2M5o5P2AQ7Ux8rTIwmCZvUcr8rKdQ22bV0IBFHllM2m5gWDP8hFaUN2nH2oW3QG44amRazflYNQ==",
+    "viemSourceRevision": "fe2bce6cc4d689d18a0d95b4ae818afc661becf1",
+    "npmAuditVulnerabilities": 0
+  },
+  "limitations": [
+    "This receipt is builder-declared and is not an independent dependency review.",
+    "The model-specific compiler and Solidity dependency closure requires maintainer verification before candidate approval."
+  ]
+}
