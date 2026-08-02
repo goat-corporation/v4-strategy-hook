@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "attestation": "builder-declared-untrusted",
+  "status": "passed-with-explicit-limitations",
+  "recordedAt": "2026-08-01",
+  "toolVersions": {
+    "forge": "1.5.1-stable (b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2)",
+    "solidity": "0.8.26+commit.8a97fa7a",
+    "slither": "0.11.5",
+    "node": "26.4.0",
+    "npm": "11.17.0",
+    "git": "2.55.0"
+  },
+  "results": [
+    {
+      "id": "format-lint-build-size",
+      "command": "forge fmt --check && forge lint --severity high && forge build --sizes",
+      "result": "passed",
+      "details": "No high-severity lint findings. Hook runtime/initcode 18,644/22,267 bytes; factory runtime/initcode 23,940/23,968 bytes. Informational naming and hashing style notes remain dispositioned."
+    },
+    {
+      "id": "default-unit-fuzz-invariant",
+      "command": "forge test --force --offline --no-match-path 'test/V4StrategyHookFork.t.sol' -vv",
+      "result": "passed",
+      "details": "27/27 entries passed: 12 unit/lifecycle/fuzz entries plus three 256-run depth-64 invariants and their inherited lifecycle entries; 49,152 invariant handler calls."
+    },
+    {
+      "id": "ci-fuzz",
+      "command": "FOUNDRY_PROFILE=ci forge test --offline --match-contract V4StrategyHookTest --match-test feeConservation -vv",
+      "result": "passed",
+      "details": "Fee conservation passed 10,000 fuzz runs."
+    },
+    {
+      "id": "ci-invariants",
+      "command": "FOUNDRY_PROFILE=ci forge test --offline --match-contract '^V4StrategyHookInvariantTest$' --match-test '^invariant_' -vv",
+      "result": "passed",
+      "details": "Three invariants passed 1,000 runs at depth 128 with zero handler reverts; 384,000 total handler calls."
+    },
+    {
+      "id": "pinned-fork-current-head",
+      "command": "MAINNET_RPC_URL=https://eth-mainnet.public.blastapi.io forge test --match-path test/V4StrategyHookFork.t.sol --force -vv",
+      "result": "passed",
+      "details": "13/13 passed. Complete inherited lifecycle ran at Ethereum block 25,664,100 against official PoolManager 0x000000000004444c5dc75cB358380D2e3dE08A90; separate current-head runtime smoke passed. No live V4STR pool was touched."
+    },
+    {
+      "id": "keeper",
+      "command": "npm --prefix keeper run check && npm --prefix keeper test && npm --prefix keeper audit --omit=dev --json",
+      "result": "passed",
+      "details": "Syntax passed; 4/4 threshold, cooldown, observation and idempotency-key policy tests passed; npm reported zero known vulnerabilities across the locked production closure."
+    },
+    {
+      "id": "indexer-reconstruction",
+      "command": "npm --prefix indexer test",
+      "result": "passed",
+      "details": "5/5 canonical ordering, duplicate/overdraw rejection, reorg rollback, confirmed-read solvency and freshness tests passed."
+    },
+    {
+      "id": "static-analysis",
+      "command": "slither . --exclude-dependencies --filter-paths 'lib|test' --json submissions/v4-strategy-hook/evidence/slither.json",
+      "result": "passed-with-dispositions",
+      "details": "Slither success=true with 11 reported results, all dispositioned in STATIC_ANALYSIS.md. Slither IR generation failed for unlockCallback and _absolute; this limitation remains explicit and is not an audit waiver."
+    },
+    {
+      "id": "gas-snapshot",
+      "command": "forge snapshot --offline --match-contract V4StrategyHookTest",
+      "result": "passed",
+      "details": "Lifecycle strategy execution test consumed 603,475 gas, below the declared 1,000,000 keeper maximum; exact snapshot is bound as .gas-snapshot."
+    }
+  ],
+  "deploymentEvidence": {
+    "pinnedBlock": 25664100,
+    "currentHeadObserved": 25667952,
+    "poolManagerRuntimeHash": "0x785f1014552b7ce7d5fb7d0c970ca60edee94fd00425d7ca21609acac7ce1293",
+    "verifiedSourceMatch": "43/43 Blockscout-published source files exactly matched Uniswap v4.0.0 commit e50237c43811bd9b526eff40f26772152a42daba"
+  },
+  "limitations": [
+    "No independent audit or specialist acceptance exists.",
+    "The prototype hook has not been deployed and has no live lifecycle receipts.",
+    "The sampled-oracle economic assumptions remain a candidate-stage review item.",
+    "Programmable maintainers have not accepted registry, indexer, UI, API, routing or launch integration."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "v4-strategy-hook-keeper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/keeper.mjs",
+    "test": "node --test test/*.test.mjs",
+    "start": "node src/keeper.mjs"
+  },
+  "dependencies": {
+    "viem": "2.55.10"
+  }
+}
