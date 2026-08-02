@@ -58,7 +58,7 @@ forge build --sizes
 forge test --offline --no-match-path test/V4StrategyHookFork.t.sol -vv
 FOUNDRY_PROFILE=ci forge test --offline --match-contract V4StrategyHookTest --match-test feeConservation -vv
 FOUNDRY_PROFILE=ci forge test --offline --match-contract '^V4StrategyHookInvariantTest$' --match-test '^invariant_' -vv
-MAINNET_RPC_URL=<ethereum-rpc> forge test --match-path test/V4StrategyHookFork.t.sol --force -vv
+MAINNET_RPC_URL=YOUR_ETHEREUM_RPC_URL forge test --match-path test/V4StrategyHookFork.t.sol --force -vv
 npm --prefix keeper run check
 npm --prefix keeper test
 npm --prefix indexer test
