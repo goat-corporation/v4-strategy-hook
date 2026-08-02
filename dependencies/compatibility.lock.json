@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "baseline": "programmable-tested",
+  "baseline": "model-specific-pinned",
   "compiler": {
     "solidity": "0.8.26",
     "sourceRepository": "https://github.com/argotorg/solidity.git",

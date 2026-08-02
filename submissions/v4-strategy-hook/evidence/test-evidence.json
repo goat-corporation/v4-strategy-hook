@@ -38,7 +38,7 @@
     },
     {
       "id": "pinned-fork-current-head",
-      "command": "MAINNET_RPC_URL=https://eth-mainnet.public.blastapi.io forge test --match-path test/V4StrategyHookFork.t.sol --force -vv",
+      "command": "docker run --rm -u 0:0 -e MAINNET_RPC_URL=https://eth-mainnet.public.blastapi.io -v <repository>:/workspace -w /workspace ghcr.io/foundry-rs/foundry:v1.5.1 'forge test --match-path test/V4StrategyHookFork.t.sol --force -vv'",
       "result": "passed",
       "details": "17/17 passed. Complete inherited lifecycle and adversarial suite ran at Ethereum block 25,664,100 against official PoolManager 0x000000000004444c5dc75cB358380D2e3dE08A90; separate current-head runtime smoke passed. No live V4STR pool was touched."
     },
@@ -64,12 +64,12 @@
       "id": "gas-snapshot",
       "command": "forge snapshot --offline --match-contract V4StrategyHookTest",
       "result": "passed",
-      "details": "Lifecycle strategy execution test consumed 603,475 gas, below the declared 1,000,000 keeper maximum; exact snapshot is bound as .gas-snapshot."
+      "details": "Lifecycle strategy execution test consumed 603,409 gas, below the declared 1,000,000 keeper maximum; exact snapshot is bound as .gas-snapshot."
     }
   ],
   "deploymentEvidence": {
     "pinnedBlock": 25664100,
-    "currentHeadObserved": 25667952,
+    "currentHeadObserved": 25668655,
     "poolManagerRuntimeHash": "0x785f1014552b7ce7d5fb7d0c970ca60edee94fd00425d7ca21609acac7ce1293",
     "verifiedSourceMatch": "43/43 Blockscout-published source files exactly matched Uniswap v4.0.0 commit e50237c43811bd9b526eff40f26772152a42daba"
   },

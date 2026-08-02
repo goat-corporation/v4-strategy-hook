@@ -5,6 +5,8 @@ const root = path.resolve(import.meta.dirname, "..");
 const file = path.join(root, "submissions/v4-strategy-hook/submission.json");
 const s = JSON.parse(fs.readFileSync(file, "utf8"));
 
+s.target.dependencyBaseline = "model-specific-pinned";
+
 const modes = [
   "zeroForOne-exactInput",
   "zeroForOne-exactOutput",
@@ -672,7 +674,7 @@ s.implementation = {
     "keeper/test/policy.test.mjs",
     "indexer/test/reconstruct.test.mjs"
   ],
-  compilerBuildInfoPaths: ["submissions/v4-strategy-hook/evidence/build-info/13d41f29dd96e226.json"],
+  compilerBuildInfoPaths: ["submissions/v4-strategy-hook/evidence/build-info/adb2b40febb7682c.json"],
   specificationPath: "spec/SPECIFICATION.md",
   testEvidencePath: "submissions/v4-strategy-hook/evidence/test-evidence.json",
   dependencyLockPath: "dependencies/compatibility.lock.json",

@@ -19,10 +19,8 @@ import { V4StrategyHook } from "../src/V4StrategyHook.sol";
 import { V4StrategyHookFactory } from "../src/V4StrategyHookFactory.sol";
 
 contract StrategyMockToken is ERC20 {
-    constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) { }
-
-    function mint(address to, uint256 amount) external {
-        _mint(to, amount);
+    constructor(string memory name_, string memory symbol_, address recipient_, uint256 amount_) ERC20(name_, symbol_) {
+        _mint(recipient_, amount_);
     }
 }
 
@@ -37,7 +35,9 @@ contract ReenteringRecipient {
 
     receive() external payable {
         attempted = true;
-        (reentered,) = address(hook).call(abi.encodeCall(V4StrategyHook.executeStrategy, ()));
+        try hook.executeStrategy() {
+            reentered = true;
+        } catch { }
     }
 }
 
@@ -65,10 +65,8 @@ contract V4StrategyHookTest is Deployers {
         creator = address(this);
         executor = makeAddr("executor");
 
-        launchToken = new StrategyMockToken("Launch Token", "LAUNCH");
-        targetToken = new StrategyMockToken("Target Token", "TARGET");
-        launchToken.mint(address(this), 10_000_000 ether);
-        targetToken.mint(address(this), 10_000_000 ether);
+        launchToken = new StrategyMockToken("Launch Token", "LAUNCH", address(this), 10_000_000 ether);
+        targetToken = new StrategyMockToken("Target Token", "TARGET", address(this), 10_000_000 ether);
         launchToken.approve(address(modifyLiquidityRouter), type(uint256).max);
         launchToken.approve(address(swapRouter), type(uint256).max);
         targetToken.approve(address(modifyLiquidityRouter), type(uint256).max);
