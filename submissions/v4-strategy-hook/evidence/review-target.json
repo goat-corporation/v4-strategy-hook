@@ -695,8 +695,8 @@
     {
       "path": "submissions/v4-strategy-hook/TEST_PLAN.md",
       "kind": "package:TEST_PLAN.md",
-      "bytes": 3433,
-      "sha256": "42e0e63f4fe6172cfd29b76c3e8df0f07c07dc022f3590554a6ae486637128af"
+      "bytes": 3440,
+      "sha256": "6caf2dd55661c3050fb09b1c3797abb1cddf25f17adaf0b8dc3d1807317fab2d"
     },
     {
       "path": "submissions/v4-strategy-hook/THREAT_MODEL.md",
@@ -3458,5 +3458,5 @@
       "kind": "javascript-import"
     }
   ],
-  "reviewTargetHash": "sha256:67bdf0a1311df93709834dbcfa1c4c69b5f42397f41914a218444c46d211dc1b"
+  "reviewTargetHash": "sha256:7a211e4decc37ba3cf467367d2e68621a5eb87a1dbabdaef6db58c989ac4c9df"
 }
