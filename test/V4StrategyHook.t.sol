@@ -5,8 +5,10 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { BaseHook } from "@openzeppelin/uniswap-hooks/src/base/BaseHook.sol";
 import { IHooks } from "@uniswap/v4-core/src/interfaces/IHooks.sol";
 import { Hooks } from "@uniswap/v4-core/src/libraries/Hooks.sol";
-import { BalanceDelta } from "@uniswap/v4-core/src/types/BalanceDelta.sol";
+import { BalanceDelta, toBalanceDelta } from "@uniswap/v4-core/src/types/BalanceDelta.sol";
+import { BeforeSwapDelta } from "@uniswap/v4-core/src/types/BeforeSwapDelta.sol";
 import { Currency, CurrencyLibrary } from "@uniswap/v4-core/src/types/Currency.sol";
+import { PoolId } from "@uniswap/v4-core/src/types/PoolId.sol";
 import { PoolKey } from "@uniswap/v4-core/src/types/PoolKey.sol";
 import { ModifyLiquidityParams, SwapParams } from "@uniswap/v4-core/src/types/PoolOperation.sol";
 import { Deployers } from "@uniswap/v4-core/test/utils/Deployers.sol";
@@ -21,6 +23,21 @@ contract StrategyMockToken is ERC20 {
 
     function mint(address to, uint256 amount) external {
         _mint(to, amount);
+    }
+}
+
+contract ReenteringRecipient {
+    V4StrategyHook internal immutable hook;
+    bool public attempted;
+    bool public reentered;
+
+    constructor(V4StrategyHook hook_) {
+        hook = hook_;
+    }
+
+    receive() external payable {
+        attempted = true;
+        (reentered,) = address(hook).call(abi.encodeCall(V4StrategyHook.executeStrategy, ()));
     }
 }
 
@@ -97,6 +114,7 @@ contract V4StrategyHookTest is Deployers {
         assertEq(hook.targetLpFee(), 0);
         assertEq(hook.targetTickSpacing(), 60);
         assertEq(address(hook.targetHooks()), address(0));
+        assertNotEq(PoolId.unwrap(hook.canonicalPoolId()), PoolId.unwrap(hook.targetPoolId()));
         assertEq(uint160(address(hook)) & Hooks.ALL_HOOK_MASK, REQUIRED_FLAGS);
 
         Hooks.Permissions memory permissions = hook.getHookPermissions();
@@ -220,6 +238,35 @@ contract V4StrategyHookTest is Deployers {
         assertGt(hook.strategyFeesAccrued(), 0);
     }
 
+    function test_executionRejectsAtomicSpotManipulationAndPreservesLiability() public {
+        _swap(true, -int256(100 ether), 100 ether);
+        _buildOracleWindow();
+        uint256 liabilityBefore = hook.strategyFeesAccrued();
+
+        swapRouter.swap{ value: 1500 ether }(
+            targetKey,
+            SwapParams({ zeroForOne: true, amountSpecified: -int256(1500 ether), sqrtPriceLimitX96: MIN_PRICE_LIMIT }),
+            settings,
+            ""
+        );
+
+        vm.expectPartialRevert(V4StrategyHook.PriceDeviation.selector);
+        hook.executeStrategy();
+        assertEq(hook.strategyFeesAccrued(), liabilityBefore);
+    }
+
+    function test_cooldownBlocksSecondExecutionWithoutConsumingLiability() public {
+        _swap(true, -int256(100 ether), 100 ether);
+        _buildOracleWindow();
+        hook.executeStrategy();
+
+        _swap(true, -int256(100 ether), 100 ether);
+        uint256 liabilityBefore = hook.strategyFeesAccrued();
+        vm.expectPartialRevert(V4StrategyHook.CooldownActive.selector);
+        hook.executeStrategy();
+        assertEq(hook.strategyFeesAccrued(), liabilityBefore);
+    }
+
     function test_observationGapResetsOracle() public {
         vm.warp(block.timestamp + hook.maxObservationGap() + 1);
         hook.recordObservation();
@@ -237,6 +284,40 @@ contract V4StrategyHookTest is Deployers {
         hook.afterSwap(address(this), canonicalKey, params, BalanceDelta.wrap(0), "");
         vm.expectRevert(BaseHook.NotPoolManager.selector);
         hook.unlockCallback("");
+    }
+
+    function test_callbackSelectorsAndReturnShapesAreExact() public {
+        vm.prank(address(manager));
+        assertEq(hook.beforeInitialize(creator, canonicalKey, SQRT_PRICE_1_1), IHooks.beforeInitialize.selector);
+
+        SwapParams memory params =
+            SwapParams({ zeroForOne: true, amountSpecified: -int256(1), sqrtPriceLimitX96: MIN_PRICE_LIMIT });
+        vm.prank(address(manager));
+        (bytes4 beforeSelector, BeforeSwapDelta beforeDelta, uint24 lpFeeOverride) =
+            hook.beforeSwap(address(this), canonicalKey, params, "");
+        assertEq(beforeSelector, IHooks.beforeSwap.selector);
+        assertEq(BeforeSwapDelta.unwrap(beforeDelta), 0);
+        assertEq(lpFeeOverride, 0);
+
+        vm.prank(address(manager));
+        (bytes4 afterSelector, int128 afterDelta) =
+            hook.afterSwap(address(this), canonicalKey, params, toBalanceDelta(-1, 1), "");
+        assertEq(afterSelector, IHooks.afterSwap.selector);
+        assertEq(afterDelta, 0);
+    }
+
+    function test_programmableClaimRecipientCannotReenterStrategy() public {
+        _swap(true, -int256(10 ether), 10 ether);
+        ReenteringRecipient recipient = new ReenteringRecipient(hook);
+        uint256 platformBefore = hook.programmableFeesAccrued();
+
+        vm.prank(hook.PROGRAMMABLE_FEE_OWNER());
+        hook.claimProgrammableFees(address(recipient));
+
+        assertTrue(recipient.attempted());
+        assertFalse(recipient.reentered());
+        assertEq(address(recipient).balance, platformBefore);
+        assertEq(hook.programmableFeesAccrued(), 0);
     }
 
     function testFuzz_feeConservation(uint96 rawAmount, bool isBuy) public view {

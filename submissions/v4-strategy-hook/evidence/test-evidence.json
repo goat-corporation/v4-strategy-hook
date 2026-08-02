@@ -22,7 +22,7 @@
       "id": "default-unit-fuzz-invariant",
       "command": "forge test --force --offline --no-match-path 'test/V4StrategyHookFork.t.sol' -vv",
       "result": "passed",
-      "details": "27/27 entries passed: 12 unit/lifecycle/fuzz entries plus three 256-run depth-64 invariants and their inherited lifecycle entries; 49,152 invariant handler calls."
+      "details": "35/35 entries passed: 16 unit/adversarial/lifecycle/fuzz entries plus three 256-run depth-64 invariants and their inherited lifecycle entries; 49,152 invariant handler calls."
     },
     {
       "id": "ci-fuzz",
@@ -40,7 +40,7 @@
       "id": "pinned-fork-current-head",
       "command": "MAINNET_RPC_URL=https://eth-mainnet.public.blastapi.io forge test --match-path test/V4StrategyHookFork.t.sol --force -vv",
       "result": "passed",
-      "details": "13/13 passed. Complete inherited lifecycle ran at Ethereum block 25,664,100 against official PoolManager 0x000000000004444c5dc75cB358380D2e3dE08A90; separate current-head runtime smoke passed. No live V4STR pool was touched."
+      "details": "17/17 passed. Complete inherited lifecycle and adversarial suite ran at Ethereum block 25,664,100 against official PoolManager 0x000000000004444c5dc75cB358380D2e3dE08A90; separate current-head runtime smoke passed. No live V4STR pool was touched."
     },
     {
       "id": "keeper",

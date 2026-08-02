@@ -672,7 +672,7 @@ s.implementation = {
     "keeper/test/policy.test.mjs",
     "indexer/test/reconstruct.test.mjs"
   ],
-  compilerBuildInfoPaths: ["submissions/v4-strategy-hook/evidence/build-info/1673e411da065ae2.json"],
+  compilerBuildInfoPaths: ["submissions/v4-strategy-hook/evidence/build-info/13d41f29dd96e226.json"],
   specificationPath: "spec/SPECIFICATION.md",
   testEvidencePath: "submissions/v4-strategy-hook/evidence/test-evidence.json",
   dependencyLockPath: "dependencies/compatibility.lock.json",
